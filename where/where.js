@@ -1,4 +1,29 @@
-var stations = {};
+aleToAsh = [{"station":"Alewife","latitude":42.395428, "longitude": -71.142483},
+{"station":"Davis", "latitude":42.39674 , "longitude": -71.121815},
+{"station":"Porter", "latitude":42.3884 , "longitude": -71.119149},
+{"station":"Harvard", "latitude":42.373362 , "longitude": -71.118956},
+{"station":"Central", "latitude":42.365486 , "longitude": -71.103802},
+{"station":"Kendall", "latitude":42.36249079 , "longitude":-71.08617653},
+{"station":"Charles MGH", "latitude":42.361166 , "longitude":-71.070628},
+{"station":"Park", "latitude":42.35639457 , "longitude":-71.0624242},
+{"station":"Downtown Crossing", "latitude":42.355518 , "longitude":-71.060225},
+{"station":"South Station", "latitude":42.352271 , "longitude":-71.055242},
+{"station":"Broadway", "latitude":42.342622 , "longitude":-71.056967},
+{"station":"Andrew", "latitude":42.330154 , "longitude":-71.057655},
+{"station":"JFK", "latitude":42.320685 , "longitude":-71.052391},
+{"station":"North Quincy", "latitude":42.275275 , "longitude":-71.029583},
+{"station":"Wollaston", "latitude":42.2665139 , "longitude":-71.0203369},
+{"station":"Quincy Center", "latitude":42.251809 , "longitude":-71.005409},
+{"station":"Quincy Adams", "latitude":42.233391 , "longitude":-71.007153},
+{"station":"Braintree", "latitude":42.2078543 , "longitude":-71.0011385}];      
+
+jfkToBt = [{"station":"JFK", "latitude":42.320685 , "longitude":-71.052391},
+{"station":"Savin Hill", "latitude":42.31129 , "longitude":-71.053331},
+{"station":"Fields Corner", "latitude":42.300093 , "longitude":-71.061667},
+{"station":"Shawmut", "latitude":42.29312583 , "longitude":-71.06573796},
+{"station":"Ashmont", "latitude":42.284652 , "longitude":-71.064489}];
+
+var stations = [];
 var map;
 
 function init(){
@@ -21,97 +46,63 @@ function drawMap(){
 function handleError(position){
   alert("Failed to find position");
 }
-
+var rootline = [];
+var btline = [];
 function drawRedline(){
-  try{
-    request = new XMLHttpRequest();
-    request.open("GET",
-      "RealTimeHeavyRailKeys.csv",
-      true);
-    request.send();
+  for(i=0;i<aleToAsh.length;i++){
+    rootline[i] = 
+     new google.maps.LatLng(aleToAsh[i]["latitude"],aleToAsh[i]["longitude"]);
+    var marker = new google.maps.Marker({
+                      position:rootline[i],
+                      map:map,icon:'Tstop.png'});
+    marker.setTitle(aleToAsh[i]["station"]);
+    var infowindow = new google.maps.InfoWindow();
+    google.maps.event.addListener(marker, 'click',function(){
+        infowindow.setContent(marker.getTitle());
+        infowindow.open(map,marker);
+        });
+
   }
-  catch(error){
-    alert("Error: "+error);
+  for(j=0;j<jfkToBt.length;j++){
+    btline[j] = 
+     new google.maps.LatLng(jfkToBt[j]["latitude"],jfkToBt[j]["longitude"]);
+    var marker = new google.maps.Marker({
+        position:btline[j],
+        map:map,icon:'Tstop.png'});
+    marker.setTitle(jfkToBt[j]["station"]);
   }
-  request.onreadystatechange = function(){
-    if(request.readyState === 4 && request.status === 200){
-      var str = request.responseText;
-      str = str.split('\n');
-      rootline = [];
-      ashline = [];
-      brainline = [];
-      for(i=0;i<25;i++){
-          rl=str[i+1].split(',');
-          rootline[i] = new google.maps.LatLng(rl[13],rl[14]);
-          stations[rl[1]] = new google.maps.Marker({
-                            position:rootline[i],
-                            map:map,icon:'Tstop.png'});
-          stations[rl[1]].setTitle(rl[3]);
-      }
-      for(i=24;i<32;i++){
-        rl=str[i+1].split(',');
-        ashline[i-24] = new google.maps.LatLng(rl[13],rl[14]);
-        stations[rl[1]] = new google.maps.Marker({
-                          position:ashline[i-24],
-                          map:map,icon:'Tstop.png'});
-          stations[rl[1]].setTitle(rl[3]);
-      }
-      brainline[0] = rootline[24];
-      for(i=32;i<41;i++){
-        rl = str[i+1].split(',');
-        brainline[i-31] = new google.maps.LatLng(rl[13],rl[14]);
-        stations[rl[1]] = new google.maps.Marker({
-                          position:brainline[i-31],
-                          map:map,icon:'Tstop.png'});
-        stations[rl[1]].setTitle(rl[3]);
-      }
-      redline1 = new google.maps.Polyline({
-                      path:rootline,
-                      map:map,
-                      strokeColor:"FF0000"});
-      redline2 = new google.maps.Polyline({
-                      path:ashline,
-                      map:map,
-                      strokeColor:"FF0000"});
-      redline3 = new google.maps.Polyline({
-                      path:brainline,
-                      map:map,
-                      strokeColor:"FF0000"});
-      fillMarkers()
-    }
-  }
+  redline1 = new google.maps.Polyline({
+            path:rootline,
+            map:map,
+            strokeColor:"FF0000"});
+  redline2 = new google.maps.Polyline({
+            path:btline,
+            map:map,
+            strokeColor:"FF0000"});
+  //fillMarkers()
 }
 
 function getMyLocation(){
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(function(position){
-    latlng = new google.maps.LatLng(position.coords.latitude,
-      position.coords.longitude);
-    map.setCenter(latlng);
-    myPos = new google.maps.Marker({position:latlng,map:map});
-      },handleError);
+        latlng = new google.maps.LatLng(position.coords.latitude,
+          position.coords.longitude);
+        map.setCenter(latlng);
+        myPos = new google.maps.Marker({position:latlng,map:map});
+        },handleError);
 
   }
-    else{
+  else{
     alert("Geolocation Not Available");
   }
 }
 
 function fillMarkers(){
-  console.log(stations[0].getTitle());
-  for(i = 0; i < stations.length; i++){
-    console.log(stations[i].getTitle());
-    var infowindow = new google.maps.InfoWindow();
-    google.maps.event.addListener(stations[i], 'click',function(){
-        infowindow.setContent(stations[i].getTitle());
-        infowindow.open(map,stations[i]);
-        });
-  }
-   try{
+  try{
     request = new XMLHttpRequest();
     request.open("GET",
-      "http://mbtamap-cedar.herokuapp.com/mapper/redline.json",
-      true);
+        "http://mbtamap-cedar.herokuapp.com/mapper/redline.json",
+        true);
     request.send();
   }
   catch(error){
@@ -122,7 +113,7 @@ function fillMarkers(){
       sched = JSON.parse(request.responseText);
       for(i = 0; i < sched.length; i++){
         var marker = stations[sched[i]["PlatformKey"]]; 
-        
+
       }
     }
   }
