@@ -1,4 +1,4 @@
-aleToAsh = [{"station":"Alewife","latitude":42.395428, "longitude": -71.142483},
+aleToBt =[{"station":"Alewife","latitude":42.395428, "longitude": -71.142483},
 {"station":"Davis", "latitude":42.39674 , "longitude": -71.121815},
 {"station":"Porter", "latitude":42.3884 , "longitude": -71.119149},
 {"station":"Harvard", "latitude":42.373362 , "longitude": -71.118956},
@@ -17,7 +17,7 @@ aleToAsh = [{"station":"Alewife","latitude":42.395428, "longitude": -71.142483},
 {"station":"Quincy Adams", "latitude":42.233391 , "longitude":-71.007153},
 {"station":"Braintree", "latitude":42.2078543 , "longitude":-71.0011385}];      
 
-jfkToBt = [{"station":"JFK", "latitude":42.320685 , "longitude":-71.052391},
+jfkToAsh = [{"station":"JFK", "latitude":42.320685 , "longitude":-71.052391},
 {"station":"Savin Hill", "latitude":42.31129 , "longitude":-71.053331},
 {"station":"Fields Corner", "latitude":42.300093 , "longitude":-71.061667},
 {"station":"Shawmut", "latitude":42.29312583 , "longitude":-71.06573796},
@@ -46,37 +46,41 @@ function drawMap(){
 function handleError(position){
   alert("Failed to find position");
 }
-var rootline = [];
-var btline = [];
-function drawRedline(){
-  for(i=0;i<aleToAsh.length;i++){
-    rootline[i] = 
-     new google.maps.LatLng(aleToAsh[i]["latitude"],aleToAsh[i]["longitude"]);
-    var marker = new google.maps.Marker({
-                      position:rootline[i],
-                      map:map,icon:'Tstop.png'});
-    marker.setTitle(aleToAsh[i]["station"]);
-    var infowindow = new google.maps.InfoWindow();
+function createWindow(marker){
+  var infowindow = new google.maps.InfoWindow();
     google.maps.event.addListener(marker, 'click',function(){
         infowindow.setContent(marker.getTitle());
         infowindow.open(map,marker);
         });
+}
 
-  }
-  for(j=0;j<jfkToBt.length;j++){
-    btline[j] = 
-     new google.maps.LatLng(jfkToBt[j]["latitude"],jfkToBt[j]["longitude"]);
+function drawRedline(){
+var rootline = [];
+var ashline = [];
+  for(i=0;i<aleToBt.length;i++){
+    rootline[i] = 
+     new google.maps.LatLng(aleToBt[i]["latitude"],aleToBt[i]["longitude"]);
     var marker = new google.maps.Marker({
-        position:btline[j],
+                      position:rootline[i],
+                      map:map,icon:'Tstop.png'});
+    marker.setTitle(aleToBt[i]["station"]);
+    createWindow(marker);
+  }
+  for(j=0;j < jfkToAsh.length;j++){
+    ashline[j] = 
+     new google.maps.LatLng(jfkToAsh[j]["latitude"],jfkToAsh[j]["longitude"]);
+    var marker = new google.maps.Marker({
+        position:ashline[j],
         map:map,icon:'Tstop.png'});
-    marker.setTitle(jfkToBt[j]["station"]);
+    marker.setTitle(jfkToAsh[j]["station"]);
+    createWindow(marker);
   }
   redline1 = new google.maps.Polyline({
             path:rootline,
             map:map,
             strokeColor:"FF0000"});
   redline2 = new google.maps.Polyline({
-            path:btline,
+            path:ashline,
             map:map,
             strokeColor:"FF0000"});
   //fillMarkers()
