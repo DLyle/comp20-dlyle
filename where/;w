@@ -1,4 +1,3 @@
-
 aleToBt =[
 {"station":"Alewife","latitude":42.395428, "longitude": -71.142483,
   "key":"ALE"},
@@ -53,13 +52,12 @@ var map;
 var rootline = [];
 var ashline = [];
 var windows = {};
-var WCpos = {};
 var EARTH_RAD = 3963.1676;
 
 function init(){
   console.log("in init");
   drawMap();
-  waldoCarmen();
+  //waldoCarmen();
   getMyLocation();
   console.log("map drawn");
   }
@@ -73,45 +71,14 @@ function waldoCarmen(){
   request.onreadystatechange = function(){
   if(request.readyState === 4 && request.status === 200){
     var locs = JSON.parse(request.responseText);
-    for(var i = 0; i < 2; i++){
-    if(typeof locs[i] != 'undefined'){
-      var name = locs[i]["name"];
-      WCpos[name] = new google.maps.LatLng(
-          locs[i]["loc"]["latitude"],locs[i]["loc"]["longitude"]);
-      var marker = new google.maps.Marker({
-                  position:WCpos[name],
-                  map:map});
-      marker.setIcon("carmen.png");
-      marker.setTitle(name);
-      console.log(name);
-      if(name == "Waldo"){
-        marker.setIcon("waldo.png");
-      }
-      marker.setVisible(true);
-      createWindow(marker,name);
-      windows[name].setContent(locs[i]["loc"]["note"]);
-    }
-    }
+    if(typeof locs[0] != 'undefined'){
+      var loc = new
+        google.maps.LatLng(locs[0]["latitude"],locs[0]["longitude"]);
+      var marker = new google.maps.Marker
   }
   }
 }
 
-function WCdist(myPos){
-  var WCinfo = new google.maps.InfoWindow({position:myPos, map:map});
-  WCinfo.setContent("");
-  if(typeof WCpos["Waldo"] != 'undefined'){
-    var waldist = google.maps.geometry.spherical.computeDistanceBetween(
-                myPos,WCpos["Waldo"],EARTH_RAD); 
-    WCinfo.setContent("You are ".concat(waldist," miles from Waldo!<br>"));
-  }
-  if(typeof WCpos["Carmen Sandiego"] != 'undefined'){
-    var cardist = google.maps.geometry.spherical.computeDistanceBetween(
-                myPos,WCpos["Carmen Sandiego"],EARTH_RAD);
-    var cont = WCinfo.getContent();
-    WCinfo.setContent(
-      cont.concat("You are ",cardist," miles from Carmen Sandiego!"));
-  }
-}
 function closestStat(myPos){
   var closest = 0;
   var mindist = google.maps.geometry.spherical.computeDistanceBetween(
@@ -209,7 +176,6 @@ function getMyLocation(){
         myPos.setTitle("You");
         createWindow(myPos,"me");
         closestStat(latlng);
-        WCdist(latlng);
         },handleError);
 
   }
