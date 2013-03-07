@@ -57,13 +57,13 @@ var WCpos = {};
 var EARTH_RAD = 3963.1676;
 
 function init(){
-  console.log("in init");
   drawMap();
   waldoCarmen();
   getMyLocation();
-  console.log("map drawn");
   }
 
+//gets the locations of waldo and carmen
+//creates markers and windows that will display their note when clicked
 function waldoCarmen(){
   var request = xmlReq();
   request.open("GET",
@@ -83,7 +83,6 @@ function waldoCarmen(){
                   map:map});
       marker.setIcon("carmen.png");
       marker.setTitle(name);
-      console.log(name);
       if(name == "Waldo"){
         marker.setIcon("waldo.png");
       }
@@ -96,22 +95,26 @@ function waldoCarmen(){
   }
 }
 
+//finds the distance between you and waldo and carmen
+//displays the distances in an InfoWindow at your location upon click
 function WCdist(myPos){
-  var WCinfo = new google.maps.InfoWindow({position:myPos, map:map});
-  WCinfo.setContent("");
+  //var WCinfo = new google.maps.InfoWindow({position:myPos, map:map});
+  var WCinfo = windows["me"];
   if(typeof WCpos["Waldo"] != 'undefined'){
+    var cont = WCinfo.getContent();
     var waldist = google.maps.geometry.spherical.computeDistanceBetween(
                 myPos,WCpos["Waldo"],EARTH_RAD); 
-    WCinfo.setContent("You are ".concat(waldist," miles from Waldo!<br>"));
+    WCinfo.setContent(cont.concat("You are ",waldist," miles from Waldo!<br>"));
   }
   if(typeof WCpos["Carmen Sandiego"] != 'undefined'){
     var cardist = google.maps.geometry.spherical.computeDistanceBetween(
                 myPos,WCpos["Carmen Sandiego"],EARTH_RAD);
     var cont = WCinfo.getContent();
     WCinfo.setContent(
-      cont.concat("You are ",cardist," miles from Carmen Sandiego!"));
+      cont.concat("You are ",cardist," miles from Carmen Sandiego!<br>"));
   }
 }
+
 function closestStat(myPos){
   var closest = 0;
   var mindist = google.maps.geometry.spherical.computeDistanceBetween(
@@ -140,23 +143,22 @@ function closestStat(myPos){
   }
   var cont = windows["me"].getContent();
   windows["me"].setContent(
-    name.concat(" is closest!<br> It is ",mindist," miles away!"));
+    name.concat(" is closest!<br> It is ",mindist," miles away!<br>"));
 }
 
 
 function drawMap(){
-  console.log("in drawMap");
   latlng = new google.maps.LatLng(42.35,-71);
   var mapDiv = document.getElementById("map_div");
   myOptions = {zoom:13, mapTypeId:"roadmap", center:latlng};
   map = new google.maps.Map(mapDiv, myOptions);
   drawRedline();
-  console.log("out");
   }
 
 function handleError(position){
   alert("Failed to find position");
 }
+
 function createWindow(marker,key){
     windows[key] = new google.maps.InfoWindow();
     windows[key].setContent(marker.getTitle());
@@ -222,7 +224,7 @@ function xmlReq(){
 try {
   var request = new XMLHttpRequest();
 }
-catch (ms1) { // yes, exception handling is supported in JavaScript
+catch (ms1) { 
   try {
     request = new ActiveXObject("Msxml2.XMLHTTP");
   }
@@ -251,9 +253,17 @@ function fillSched(){
       sched = JSON.parse(request.responseText);
       for(i = 0; i < sched.length; i++){
         var key = sched[i]["PlatformKey"];
+        var n_or_s = key[key.length-1];
+        var dir = "Northbound";
+        if (n_or_s == "S"){
+          dir = "Southbound";
+        }
+        var time = sched[i]["Time"].split(' ')[1];
+        console.log(n_or_s);
+        console.log(dir);
         key = key.substring(1,key.length-1);
         var cont = windows[key].getContent();
-        windows[key].setContent(cont.concat("<br>",sched[i]["Time"]));
+        windows[key].setContent(cont.concat("<br>",time," ",dir));
       }
     }
   }
