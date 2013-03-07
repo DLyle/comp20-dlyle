@@ -259,8 +259,6 @@ function fillSched(){
           dir = "Southbound";
         }
         var time = sched[i]["Time"].split(' ')[1];
-        console.log(n_or_s);
-        console.log(dir);
         key = key.substring(1,key.length-1);
         var cont = windows[key].getContent();
         windows[key].setContent(cont.concat("<br>",time," ",dir));
