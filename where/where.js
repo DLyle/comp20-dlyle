@@ -52,13 +52,50 @@ var map;
 var rootline = [];
 var ashline = [];
 var windows = {};
+var EARTH_RAD = 3963.1676;
 
 function init(){
   console.log("in init");
   drawMap();
+  //waldoCarmen();
   getMyLocation();
   console.log("map drawn");
   }
+
+function waldoCarmen(){
+
+}
+function closestStat(myPos){
+  var closest = 0;
+  var mindist = google.maps.geometry.spherical.computeDistanceBetween(
+                myPos,rootline[0],EARTH_RAD);  
+  var isRoot = true;
+  for(var i = 1; i < rootline.length; i++){
+    var dist = google.maps.geometry.spherical.computeDistanceBetween(
+               myPos,rootline[i],EARTH_RAD);
+    if( dist < mindist){
+      mindist = dist;
+      closest = i;
+    }
+  }
+  for(var j = 0; j < ashline.length; j++){
+    var dist = google.maps.geometry.spherical.computeDistanceBetween(
+               myPos,ashline[j],EARTH_RAD);
+    if(dist < mindist){
+      mindist = dist;
+      closest = j;
+      isRoot = false;
+    }
+  }
+  var name = aleToBt[closest]["station"];
+  if(!isRoot){
+    name = jfkToAsh[closest]["station"];
+  }
+  var cont = windows["me"].getContent();
+  windows["me"].setContent(
+    name.concat(" is closest!<br> It is ",mindist," miles away!"));
+}
+
 
 function drawMap(){
   console.log("in drawMap");
@@ -122,6 +159,9 @@ function getMyLocation(){
           position.coords.longitude);
         map.setCenter(latlng);
         myPos = new google.maps.Marker({position:latlng,map:map});
+        myPos.setTitle("You");
+        createWindow(myPos,"me");
+        closestStat(latlng);
         },handleError);
 
   }
@@ -131,6 +171,25 @@ function getMyLocation(){
 }
 
 function fillSched(){
+try {
+  request = new XMLHttpRequest();
+}
+catch (ms1) { // yes, exception handling is supported in JavaScript
+  try {
+    request = new ActiveXObject("Msxml2.XMLHTTP");
+  }
+  catch (ms2) {
+    try {
+      request = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    catch (ex) {
+      request = null;
+    }
+  }
+}
+/*if (request == null) {
+  alert("Error creating request object --Ajax not supported?");
+}
   try{
     request = new XMLHttpRequest();
     request.open("GET",
@@ -141,6 +200,12 @@ function fillSched(){
   catch(error){
     alert("Error: "+error);
   }
+  */
+  request.open("GET",
+        "http://mbtamap-cedar.herokuapp.com/mapper/redline.json",
+        true);
+  request.send();
+
   request.onreadystatechange = function(){
     if(request.readyState === 4 && request.status === 200){
       sched = JSON.parse(request.responseText);
