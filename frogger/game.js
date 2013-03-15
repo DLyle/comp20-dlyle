@@ -48,21 +48,21 @@ function startGame(){
 }
 
 function initLogPos(){
-  logs[0][0] = 360;
-  logs[0][1] = 210;
-  logs[0][2] = 60;
-  logs[1][0] = 30;
+  logs[0][0] = 360;//medium
+  logs[0][1] = 190;
+  logs[0][2] = 20;
+  logs[1][0] = 30; //short
   logs[1][1] = 180;
   logs[1][2] = 330;
-  logs[2][0] = 30;
+  logs[2][0] = 30; //long
   logs[2][1] = 280;
   logs[2][2] = 530;
-  logs[3][0] = 360;
+  logs[3][0] = 360; //short
   logs[3][1] = 210;
   logs[3][2] = 60;
-  logs[4][0] = 30;
-  logs[4][1] = 180;
-  logs[4][2] = 330;
+  logs[4][0] = 30;  //medium
+  logs[4][1] = 200;
+  logs[4][2] = 370;
 }
 
 function moveFrogger(event){
@@ -119,6 +119,10 @@ function drawCars(){
   }
 }
 
+function frogOnLog(logpos,w,h){
+  return (frogy == h && frogx >= logpos && frogx < logpos+w-20)
+}
+
 function Long(log,right,h){
   ctx.drawImage(image,0,160,200,30,log[0],h,200,30);//log
 
@@ -128,14 +132,14 @@ function Long(log,right,h){
 
   for(var i = 0; i < 3; i++){
     if(right){
-      if(frogOnLog(log[i],200,h)) frogx+=3;
+      if(frogOnLog(log[i],176,h)) frogx+=3;
       log[i] += 3;
       if (log[i] > 600){
         log[i] = -200;
       }
     }
     else{
-      if(frogOnLog(log[i],200,h)) frogx-=3;
+      if(frogOnLog(log[i],176,h)) frogx-=3;
       log[i] -= 3;
       if (log[i]+200 < -200){
         log[i] = 400;
@@ -154,24 +158,20 @@ function Med(log,right,h){
 
   for(var i = 0; i < 3; i++){
     if(right){
-      if(frogOnLog(log[i],130,h)) frogx+=2;
+      if(frogOnLog(log[i],115,h)) frogx+=2;
       log[i] += 2;
       if (log[i] > 400){
         log[i] = -130;
       }
     }
     else{
-      if(frogOnLog(log[i],130,h)) frogx-=2;
+      if(frogOnLog(log[i],115,h)) frogx-=2;
       log[i] -= 2;
       if (log[i]+130 < 0){
         log[i] = 400;
       }
     }
   }
-}
-
-function frogOnLog(logpos,w,h){
-  return (frogy == h && frogx >= logpos && frogx < logpos+w)
 }
 
 function Short(log,right,h){
@@ -183,14 +183,14 @@ function Short(log,right,h){
 
   for(var i = 0; i < 3; i++){
     if(right){
-      if(frogOnLog(log[i],100,h)) frogx++;
+      if(frogOnLog(log[i],84,h)) frogx++;
       log[i] ++;
       if (log[i] > 400){
         log[i] = -100;
       }
     }
     else{
-      if(frogOnLog(log[i],100,h)) frogx--;
+      if(frogOnLog(log[i],84,h)) frogx--;
       log[i] --;
       if (log[i]+130 < 0){
         log[i] = 400;
