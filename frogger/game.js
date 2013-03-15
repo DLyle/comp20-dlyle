@@ -8,30 +8,33 @@ var lives;
 var image;
 var ctx;
 var speed;
-var longx = [];
-var medx = [];
-var shortx = [];
+var logs = [];
+logs[0] = [];
+logs[1] = [];
+logs[2] = [];
+logs[3] = [];
+logs[4] = [];
 var time;
 var loglvl = [];
 var whichLog = [];
-
+var carx = [];
 function startGame(){
   var c = document.getElementById("game");
-  ctx = c.getContext("2d");
+  if(c.getContext("2d")){
+    ctx = c.getContext("2d");
+  }
+  else{
+    alert("Canvas is not supported");
+  }
   time = new Date();
   score = 0;
   level = 1;
   frogx = 185;
   frogy = 492;
-  longx[0] = 30;
-  longx[1] = 280;
-  longx[2] = 530;
-  shortx[0] = 30;
-  shortx[1] = 180;
-  shortx[2] = 330;
-  medx[0] = 30;
-  medx[1] = 180;
-  medx[2] = 330;
+  initLogPos();
+    for(var i=0;i<5;i++){
+    carx[i] = 100;
+  }
   speed = 50;
   highscore = 0;
   lives = 3;
@@ -41,27 +44,46 @@ function startGame(){
   image = new Image();
   image.src = "assets/frogger_sprites.png";
   setInterval(drawBoard,speed);
-  document.addEventListener("keydown",function(event){
-    if (event.keyCode == 37){
-      frogx-=35;
-      //leftArrow();
-    }
-    else if (event.keyCode == 38){
-      frogy-=35;
-      console.log(frogy);
-      //upArrow();
-    }
-    else if (event.keyCode == 39){
-      frogx += 35;
-      //rightArrow();
-    }
-    else if (event.keyCode == 40){
-      frogy+=35;
-      //downArrow():
-    }
-  });
+  document.addEventListener("keydown",moveFrogger);
 }
 
+function initLogPos(){
+  logs[0][0] = 360;
+  logs[0][1] = 210;
+  logs[0][2] = 60;
+  logs[1][0] = 30;
+  logs[1][1] = 180;
+  logs[1][2] = 330;
+  logs[2][0] = 30;
+  logs[2][1] = 280;
+  logs[2][2] = 530;
+  logs[3][0] = 360;
+  logs[3][1] = 210;
+  logs[3][2] = 60;
+  logs[4][0] = 30;
+  logs[4][1] = 180;
+  logs[4][2] = 330;
+}
+
+function moveFrogger(event){
+  if (event.keyCode == 37){
+    frogx-=35;
+    //leftArrow();
+  }
+  else if (event.keyCode == 38){
+    frogy-=35;
+    console.log(frogy);
+    //upArrow();
+  }
+  else if (event.keyCode == 39){
+    frogx += 35;
+    //rightArrow();
+  }
+  else if (event.keyCode == 40){
+    frogy+=35;
+    //downArrow():
+  }
+}
 function playGame(){
   console.log(time.getSeconds());
   if(logx < 500){
@@ -84,71 +106,106 @@ function drawFrogger(){
 }
 
 function drawCars(){
-  ctx.drawImage(image,76,260,40,30,100,457,40,30); //car 
-  ctx.drawImage(image,8,296,30,30,100,422,30,30); //car 
-  ctx.drawImage(image,0,260,40,30,100,387,40,30); //car 
-  ctx.drawImage(image,42,260,38,30,100,352,38,30);//car
-  ctx.drawImage(image,100,296,55,30,100,317,55,30);//car
-}
-
-function Long(){
-  ctx.drawImage(image,0,160,200,30,longx[0],178,200,30);//log
-  longx[0]+=3;
-  if(longx[0] > 600){
-    longx[0] = -200;
-  }
-  ctx.drawImage(image,0,160,200,30,longx[1],178,200,30);//log
-  longx[1]+=3;
-  if(longx[1] > 600){
-    longx[1] = -200;
-  }
-  ctx.drawImage(image,0,160,200,30,longx[2],178,200,30);//log
-  longx[2]+=3;
-  if(longx[2] > 600){
-    longx[2] = -200;
+  ctx.drawImage(image,76,260,40,30,carx[0],457,40,30); //car 
+  ctx.drawImage(image,8,296,30,30,carx[1],422,30,30); //car 
+  ctx.drawImage(image,0,260,40,30,carx[2],387,40,30); //car 
+  ctx.drawImage(image,42,260,38,30,carx[3],352,38,30);//car
+  ctx.drawImage(image,100,296,55,30,carx[4],317,55,30);//car
+  for(var i=0; i<5; i++){
+    carx[i]++;
+    if (i == 0 || i == 2){
+      carx[i]-=2;
+    }
   }
 }
 
-function Med(){
-  ctx.drawImage(image,0,190,130,30,medx[0],107,130,30);
-  medx[0] += 2;
-  if(medx[0] > 400){
-    medx[0] = -130;
+function Long(log,right,h){
+  ctx.drawImage(image,0,160,200,30,log[0],h,200,30);//log
+
+  ctx.drawImage(image,0,160,200,30,log[1],h,200,30);//log
+
+  ctx.drawImage(image,0,160,200,30,log[2],h,200,30);//log
+
+  for(var i = 0; i < 3; i++){
+    if(right){
+      if(frogOnLog(log[i],200,h)) frogx+=3;
+      log[i] += 3;
+      if (log[i] > 600){
+        log[i] = -200;
+      }
+    }
+    else{
+      if(frogOnLog(log[i],200,h)) frogx-=3;
+      log[i] -= 3;
+      if (log[i]+200 < -200){
+        log[i] = 400;
+      }
+    }
   }
-  ctx.drawImage(image,0,190,130,30,medx[1],107,130,30);
-  medx[1] += 2;
-  if(medx[1] > 400){
-    medx[1] = -130;
-  }
-  ctx.drawImage(image,0,190,130,30,medx[2],107,130,30);
-  medx[2] += 2;
-  if(medx[2] > 400){
-    medx[2] = -130;
+
+}
+
+function Med(log,right,h){
+  ctx.drawImage(image,0,190,130,30,log[0],h,130,30);
+  
+  ctx.drawImage(image,0,190,130,30,log[1],h,130,30);
+
+  ctx.drawImage(image,0,190,130,30,log[2],h,130,30);
+
+  for(var i = 0; i < 3; i++){
+    if(right){
+      if(frogOnLog(log[i],130,h)) frogx+=2;
+      log[i] += 2;
+      if (log[i] > 400){
+        log[i] = -130;
+      }
+    }
+    else{
+      if(frogOnLog(log[i],130,h)) frogx-=2;
+      log[i] -= 2;
+      if (log[i]+130 < 0){
+        log[i] = 400;
+      }
+    }
   }
 }
 
-function Short(){
-  ctx.drawImage(image,0,220,100,30,shortx[0],209,100,30);
-  shortx[0] ++;
-  if(shortx[0] > 400){
-    shortx[0] = -100;
+function frogOnLog(logpos,w,h){
+  return (frogy == h && frogx >= logpos && frogx < logpos+w)
+}
+
+function Short(log,right,h){
+  ctx.drawImage(image,0,220,100,30,log[0],h,100,30);
+
+  ctx.drawImage(image,0,220,100,30,log[1],h,100,30);
+
+  ctx.drawImage(image,0,220,100,30,log[2],h,100,30);
+
+  for(var i = 0; i < 3; i++){
+    if(right){
+      if(frogOnLog(log[i],100,h)) frogx++;
+      log[i] ++;
+      if (log[i] > 400){
+        log[i] = -100;
+      }
+    }
+    else{
+      if(frogOnLog(log[i],100,h)) frogx--;
+      log[i] --;
+      if (log[i]+130 < 0){
+        log[i] = 400;
+      }
+    }
   }
-  ctx.drawImage(image,0,220,100,30,shortx[1],209,100,30);
-  shortx[1] ++;
-  if(shortx[1] > 400){
-    shortx[1] = -100;
-  }
-  ctx.drawImage(image,0,220,100,30,shortx[2],209,100,30);
-  shortx[2] ++;
-  if(shortx[2] > 400){
-    shortx[2] = -100;
-  }
+
 }
 
 function drawLogs(){
-  whichLog[0]();
-  whichLog[1]();
-  whichLog[2]();
+  Short(logs[1],true,212);
+  Short(logs[3],false,142);
+  Med(logs[4],true,107);
+  Med(logs[0],false,247);
+  Long(logs[2],true,177);
 }
 
 function drawBackground(){
