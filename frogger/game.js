@@ -9,6 +9,8 @@ var lives;
 var image;
 var ctx;
 var speed;
+var safeties = [];
+var numsafe;
 var GameOver;
 var deadFrog;
 var logs = [];
@@ -41,15 +43,14 @@ function startGame(){
   initCarPos();
   speed = 50;
   highscore = 0;
+  numsafe = 0;
   lives = 3;
   GameOver = false;
   image = new Image();
   image.src = "assets/frogger_sprites.png";
   deadFrog = new Image();
   deadFrog.src = "assets/dead_frog.png";
-  if(!GameOver){
-  setInterval(drawBoard,speed);
-  }
+  inter = setInterval(drawBoard,speed);
   document.addEventListener("keydown",moveFrogger);
 }
 
@@ -91,26 +92,56 @@ function initCarPos(){
 
 function safety(){
   score+=50;
+  var x = frogx;
+  var y = frogy;
+  safeties[numsafe] = function(){
+    ctx.drawImage(image,8,360,30,30,x,y,30,30);
+  }
+  numsafe ++;
+  if(numsafe == 5){
+    numsafe = 0;
+    safeties = [];
+    level++;
+    speed *= .75
+    clearInterval(inter);
+    inter = setInterval(drawBoard,speed);
+    score += 1000
+  }
 }
+
 
 function moveFrogger(event){
   if (event.keyCode == 37){
+    event.preventDefault();
     leftArrow();
   }
   else if (event.keyCode == 38){
-    //frogy-=35;
+    event.preventDefault();
     upArrow();
   }
   else if (event.keyCode == 39){
-    frogx += 35;
-    //rightArrow();
+    event.preventDefault();
+    rightArrow();
   }
   else if (event.keyCode == 40){
-    frogy+=35;
-    //downArrow():
+    event.preventDefault();
+    downArrow();
   }
   else if (event.keyCode == 78){
+    clearInterval(inter);
     startGame();
+  }
+}
+
+function rightArrow(){
+  if(frogx + 35 < 390){
+    frogx+=35;
+  }
+}
+
+function downArrow(){
+  if(frogy+35 < 498){
+    frogy+=35;
   }
 }
 
@@ -120,6 +151,26 @@ function leftArrow(){
   }
 }
 
+function isSafe(){
+  if(frogx > 10 && frogx + 20 < 45){
+    return true;
+  }
+  else if (frogx > 85 && frogx + 20 < 130){
+    return true;
+  }
+  else if (frogx > 180 && frogx + 20 < 215){
+    return true;
+  }
+  else if (frogx > 265 && frogx + 20 < 300){
+    return true;
+  }
+  else if (frogx > 350 && frogx + 20 < 385){
+    return true;
+  }
+  else {
+    return false;
+  }
+}
 
 function upArrow(){
   frogy-=35;
@@ -128,8 +179,15 @@ function upArrow(){
     score+=10;
   }
   if(frogy <= 72){
+    if(isSafe()){
+    safety();
     frogx = 185;
     frogy = 492;
+    progress = 492;
+    }
+    else {
+      dead();
+    }
   }
 }
 
@@ -137,6 +195,7 @@ function dead(){
   ctx.drawImage(deadFrog,0,0,30,30,frogx,frogy,30,30);//frog
   frogx = 185;
   frogy = 492;
+  progress = 492;
   lives --;
   if(lives <= 0){
     GameOver = true;
@@ -151,6 +210,9 @@ function drawBoard(){
     drawLogs();
     drawFrogger();
     drawCars();
+    for(var i =0; i< numsafe;i++){
+      safeties[i]();
+    }
   }
   else{
     drawBackground();
@@ -158,7 +220,7 @@ function drawBoard(){
     ctx.font="30px Arial Green";
     ctx.fillText("Game Over",120,200);
     ctx.font="20px Arial Green";
-    ctx.fillText("Press 'n' for New Game",105,225);
+    ctx.fillText("Press n for New Game",105,225);
   }
 }
 
