@@ -155,6 +155,25 @@ function leftArrow(){
   }
 }
 
+function upArrow(){
+  frogy-=35;
+  if(frogy < progress){
+    progress -= 35;
+    score+=10;
+  }
+  if(frogy <= 72){
+    if(isSafe()){
+    safety();
+    frogx = 185;
+    frogy = 492;
+    progress = 492;
+    }
+    else {
+      dead();
+    }
+  }
+}
+
 function isSafe(){
   if(frogx > 10 && frogx + 20 < 45 && !usedSafe[0]){
     usedSafe[0] = true;
@@ -178,25 +197,6 @@ function isSafe(){
   }
   else {
     return false;
-  }
-}
-
-function upArrow(){
-  frogy-=35;
-  if(frogy < progress){
-    progress -= 35;
-    score+=10;
-  }
-  if(frogy <= 72){
-    if(isSafe()){
-    safety();
-    frogx = 185;
-    frogy = 492;
-    progress = 492;
-    }
-    else {
-      dead();
-    }
   }
 }
 
@@ -238,23 +238,23 @@ function drawFrogger(){
 }
 
 function car1(pos){
-  ctx.drawImage(image,76,260,40,30,pos,457,40,30); //car 
+  ctx.drawImage(image,76,260,40,30,pos,457,40,30);  
 }
 
 function car2(pos){
-  ctx.drawImage(image,8,296,30,30,pos,422,30,30); //car 
+  ctx.drawImage(image,8,296,30,30,pos,422,30,30);  
 }
 
 function car3(pos){
-  ctx.drawImage(image,0,260,40,30,pos,387,40,30); //car 
+  ctx.drawImage(image,0,260,40,30,pos,387,40,30); 
 }
 
 function car4(pos){
-  ctx.drawImage(image,42,260,38,30,pos,352,38,30);//car
+  ctx.drawImage(image,42,260,38,30,pos,352,38,30);
 }
 
 function car5(pos){
-  ctx.drawImage(image,100,296,55,30,pos,317,55,30);//car
+  ctx.drawImage(image,100,296,55,30,pos,317,55,30);
 }
 
 function hitByCar(x,y){
