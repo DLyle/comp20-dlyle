@@ -10,6 +10,7 @@ var image;
 var ctx;
 var speed;
 var safeties = [];
+var usedSafe = [];
 var numsafe;
 var GameOver;
 var deadFrog;
@@ -41,6 +42,9 @@ function startGame(){
   progress = 492;
   initLogPos();
   initCarPos();
+  for(var i = 0; i < 5; i++){
+    usedSafe[i] = false;
+  }
   speed = 50;
   highscore = 0;
   numsafe = 0;
@@ -152,19 +156,24 @@ function leftArrow(){
 }
 
 function isSafe(){
-  if(frogx > 10 && frogx + 20 < 45){
+  if(frogx > 10 && frogx + 20 < 45 && !usedSafe[0]){
+    usedSafe[0] = true;
     return true;
   }
-  else if (frogx > 85 && frogx + 20 < 130){
+  else if (frogx > 85 && frogx + 20 < 130 && !usedSafe[1]){
+    usedSafe[1] = true;
     return true;
   }
-  else if (frogx > 180 && frogx + 20 < 215){
+  else if (frogx > 180 && frogx + 20 < 215 && !usedSafe[2]){
+    usedSafe[2] = true;
     return true;
   }
-  else if (frogx > 265 && frogx + 20 < 300){
+  else if (frogx > 265 && frogx + 20 < 300 && !usedSafe[3]){
+    usedSafe[3] = true;
     return true;
   }
-  else if (frogx > 350 && frogx + 20 < 385){
+  else if (frogx > 350 && frogx + 20 < 385 && !usedSafe[4]){
+    usedSafe[4] = true;
     return true;
   }
   else {
@@ -301,7 +310,7 @@ function Short(x,y){
 function mvLogs(logtype,log,right,h){
   var logfun = Short;
   var step = 1.5;
-  var width = 84;
+  var width = 92;
   var startpos = frogx;
   var ubound = 400;
   var lbound = 0;
@@ -309,14 +318,14 @@ function mvLogs(logtype,log,right,h){
     case "med":
       logfun = Med;
       step = 2;
-      width = 116;
+      width = 124;
       ubound = 500;
       lbound = -100;
       break; 
     case "long":
       logfun = Long;
       step = 3;
-      width = 176;
+      width = 184;
       ubound = 600;
       lbound = -200;
       break;
