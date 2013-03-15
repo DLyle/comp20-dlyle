@@ -14,10 +14,15 @@ logs[1] = [];
 logs[2] = [];
 logs[3] = [];
 logs[4] = [];
+var cars = [];
+cars[0] = [];
+cars[1] = [];
+cars[2] = [];
+cars[3] = [];
+cars[4] = [];
 var time;
 var loglvl = [];
 var whichLog = [];
-var carx = [];
 function startGame(){
   var c = document.getElementById("game");
   if(c.getContext("2d")){
@@ -32,9 +37,7 @@ function startGame(){
   frogx = 185;
   frogy = 492;
   initLogPos();
-    for(var i=0;i<5;i++){
-    carx[i] = 100;
-  }
+  initCarPos();
   speed = 50;
   highscore = 0;
   lives = 3;
@@ -65,6 +68,23 @@ function initLogPos(){
   logs[4][2] = 370;
 }
 
+function initCarPos(){
+  cars[0][0] = 360;//car1
+  cars[0][1] = 250;
+  cars[0][2] = 140;
+  cars[1][0] = 30; //car2
+  cars[1][1] = 140;
+  cars[1][2] = 250;
+  cars[2][0] = 300; //car3
+  cars[2][1] = 190;
+  cars[2][2] = 80;
+  cars[3][0] = 60; //car4
+  cars[3][1] = 170;
+  cars[3][2] = 280;
+  cars[4][0] = 340;  //car5
+  cars[4][1] = 230;
+  cars[4][2] = 120;
+}
 function moveFrogger(event){
   if (event.keyCode == 37){
     frogx-=35;
@@ -84,6 +104,12 @@ function moveFrogger(event){
     //downArrow():
   }
 }
+
+function dead(){
+
+}
+
+
 function playGame(){
   console.log(time.getSeconds());
   if(logx < 500){
@@ -105,18 +131,65 @@ function drawFrogger(){
   ctx.drawImage(image,8,360,30,30,frogx,frogy,30,30);//frog
 }
 
-function drawCars(){
-  ctx.drawImage(image,76,260,40,30,carx[0],457,40,30); //car 
-  ctx.drawImage(image,8,296,30,30,carx[1],422,30,30); //car 
-  ctx.drawImage(image,0,260,40,30,carx[2],387,40,30); //car 
-  ctx.drawImage(image,42,260,38,30,carx[3],352,38,30);//car
-  ctx.drawImage(image,100,296,55,30,carx[4],317,55,30);//car
-  for(var i=0; i<5; i++){
-    carx[i]++;
-    if (i == 0 || i == 2){
-      carx[i]-=2;
+function car1(pos){
+  ctx.drawImage(image,76,260,40,30,pos,457,40,30); //car 
+}
+
+function car2(pos){
+  ctx.drawImage(image,8,296,30,30,pos,422,30,30); //car 
+}
+function initLogPos(){
+  logs[0][0] = 360;//medium
+  logs[0][1] = 190;
+  logs[0][2] = 20;
+  logs[1][0] = 30; //short
+  logs[1][1] = 180;
+  logs[1][2] = 330;
+  logs[2][0] = 30; //long
+  logs[2][1] = 280;
+  logs[2][2] = 530;
+  logs[3][0] = 360; //short
+  logs[3][1] = 210;
+  logs[3][2] = 60;
+  logs[4][0] = 30;  //medium
+  logs[4][1] = 200;
+  logs[4][2] = 370;
+}
+function car3(pos){
+  ctx.drawImage(image,0,260,40,30,pos,387,40,30); //car 
+}
+
+function car4(pos){
+  ctx.drawImage(image,42,260,38,30,pos,352,38,30);//car
+}
+
+function car5(pos){
+  ctx.drawImage(image,100,296,55,30,pos,317,55,30);//car
+}
+
+function mvCars(carfun,car,right){
+  for(var i=0; i < 5; i++){
+    carfun(car[i]);
+    if(right){
+      car[i]+=2;
+      if(car[i] > 400)
+        car[i] = -80;
+    }
+    else{
+      car[i]-=2;
+      if(car[i] < -60)
+        car[i]=460;
     }
   }
+}
+
+
+function drawCars(){
+  mvCars(car1,cars[0],false);
+  mvCars(car2,cars[1],true);
+  mvCars(car3,cars[2],false);
+  mvCars(car4,cars[3],true);
+  mvCars(car5,cars[4],false);
 }
 
 function frogOnLog(logpos,w,h){
@@ -124,6 +197,7 @@ function frogOnLog(logpos,w,h){
 }
 
 function Long(log,right,h){
+  var startpos = frogx;
   ctx.drawImage(image,0,160,200,30,log[0],h,200,30);//log
 
   ctx.drawImage(image,0,160,200,30,log[1],h,200,30);//log
@@ -145,6 +219,9 @@ function Long(log,right,h){
         log[i] = 400;
       }
     }
+  }
+  if(h==frogy && startpos==frogx){
+    dead();
   }
 
 }
