@@ -1,12 +1,15 @@
 David Lyle
-Comp20 Frogger Assignment Part 1
+Comp20 Frogger Assignment Part 2
 
-All the initial graphics for frogger have been correctly implemented. 
-I believe that fulfills the specifications of this assignment. 
+Basic Requirements: All basic requirements have been implemented.
+
+Additional Requirements: 
+  - dead_frog.png appears when frogger dies
+  - speed of logs and cars increases when level increments
 
 I discussed the assigment with Sam Dushay.
 
-I spent about 3 hours on this assignment. 
+I spent about 7 hours on this assignment. 
 
 
 
