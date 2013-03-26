@@ -14,10 +14,16 @@
     Year = time.getFullYear();
     Hour = time.getHours();
     Minutes = time.getMinutes();
-    var text = document.createTextNode(Month+"/"+Day+"/"+Year+" "+Hour+":"+Minutes+" - "+update);
-    var para = document.createElement("p");
-    para.appendChild(text);
-    document.getElementById("status").appendChild(para);
+    localStorage[time.getTime()] = Month+"/"+Day+"/"+Year+" "+Hour+":"+Minutes+" - "+update;
+    var output = "";
+    for (key in localStorage){
+      output = "<p>" + localStorage[key] + "</p>\n" + output;
+    }
+    //var text = document.createTextNode(Month+"/"+Day+"/"+Year+" "+Hour+":"+Minutes+" - "+update);
+    //var para = document.createElement("p");
+    //para.appendChild(text);
+    var stat = document.getElementById("status");
+    stat.innerHTML = output;
 }
 </script>
 </head>
