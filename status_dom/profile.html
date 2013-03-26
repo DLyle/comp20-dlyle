@@ -6,6 +6,14 @@
 <head>
 <title>Fecesbook</title>
 <script>
+  function init(){
+    var output = "";
+    for (key in localStorage){
+      output = "<p>" + localStorage[key] + "</p>\n" + output;
+    }
+    var stat = document.getElementById("status");
+    stat.innerHTML = output;
+  }
   function Disp_Updates (){
     var update = document.getElementById("msg").value;
     var time = new Date();
@@ -19,16 +27,13 @@
     for (key in localStorage){
       output = "<p>" + localStorage[key] + "</p>\n" + output;
     }
-    //var text = document.createTextNode(Month+"/"+Day+"/"+Year+" "+Hour+":"+Minutes+" - "+update);
-    //var para = document.createElement("p");
-    //para.appendChild(text);
     var stat = document.getElementById("status");
     stat.innerHTML = output;
 }
 </script>
 </head>
 
-<body>
+<body onload = "init();">
 	<h1>Fecebook</h1>
 	<div id="nav">
 		<ul>
