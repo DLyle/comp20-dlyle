@@ -175,23 +175,23 @@ function upArrow(){
 }
 
 function isSafe(){
-  if(frogx > 10 && frogx + 20 < 45 && !usedSafe[0]){
+  if(frogx > 8 && frogx + 20 < 45 && !usedSafe[0]){
     usedSafe[0] = true;
     return true;
   }
-  else if (frogx > 85 && frogx + 20 < 130 && !usedSafe[1]){
+  else if (frogx > 83 && frogx + 20 < 130 && !usedSafe[1]){
     usedSafe[1] = true;
     return true;
   }
-  else if (frogx > 180 && frogx + 20 < 215 && !usedSafe[2]){
+  else if (frogx > 178 && frogx + 20 < 215 && !usedSafe[2]){
     usedSafe[2] = true;
     return true;
   }
-  else if (frogx > 265 && frogx + 20 < 300 && !usedSafe[3]){
+  else if (frogx > 263 && frogx + 20 < 300 && !usedSafe[3]){
     usedSafe[3] = true;
     return true;
   }
-  else if (frogx > 350 && frogx + 20 < 385 && !usedSafe[4]){
+  else if (frogx > 348 && frogx + 20 < 385 && !usedSafe[4]){
     usedSafe[4] = true;
     return true;
   }
