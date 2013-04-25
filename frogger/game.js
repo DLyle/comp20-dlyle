@@ -224,8 +224,15 @@ function drawBoard(){
     }
   }
   else{
+    clearInterval(inter);
     drawBackground();
     drawFooter();
+    var thescore = score;
+    var data = {};
+    data["game_title"] = "mines";
+    data["username"] = "David";
+    data["score"] = score;
+    $.post("http://agile-cliffs-3152.herokuapp.com/submit.json",data);
     ctx.font="30px Arial Green";
     ctx.fillText("Game Over",120,200);
     ctx.font="20px Arial Green";
