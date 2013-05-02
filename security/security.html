@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Comp 20, A6</title>
+<link rel="stylesheet" type="text/css" href="security.css" />
+</head>
+
+<body>
+<div class="center">
+<h1 class="title">Scorecenter Security Analysis</h1>
+<a href="#introduction">Introduction</a> | <a href="#methodology">Methodology</a> | <a href="#findings">Abstract of Findings</a> | <a href="#issues">Issues Found</a> | <a href="#conclusion">Conclusion</a>
+</div>
+
+<a name="introduction"></a><h1>Introduction</h1>
+<p>The scorecenter app can be used to store the highscores for any html5 game.
+Using a post API a user can post the highscores for any game and user to the
+app. They can also use a get API to retrieve a json of the top 10 scores for any
+game. The homepage 'http://infinite-hollows-6307.herokuapp.com/' will display
+all the scores for all the games that are stored with this app. The usersearch
+page, 'http://infinite-hollows-6307.herokuapp.com/usersearch', will allow a user
+to search for the highscores of any user. I was hired to test this application,
+and find any security flaws that may ruin its integrity. </p>
+
+<a name="methodology"></a><h1>Methodology</h1>
+<p>In testing this application, I first examined the interface without seeing
+the source code. I tried posting to it from my Frogger game, and examining the
+results on the homepage. I also searched for different users on the usersearch
+page. After black box texting, I examine the source code. Here I was looking for
+how the coder handled input, and other unhandled boundary cases that malicious
+users could exploit.</p>
+
+<a name="findings"></a><h1>Abstract of Findings</h1>
+<p>Most of the flaws found during my assessment can be attributed to lack of
+input sanitization. This means that the user can post basically anything to the
+application through the post API. They can also enter anything into the user
+search bar. The lack of sanitization in the post API is more serious because
+this input is displayed as html on the homepage. This means that a hacker could
+post their own code to run when the homepage is accessed. A hacker could also
+post some huge amount of data to the application that would crash the database.
+The final problem that I found while reviewing the source code, is that anybody
+can post or get from the application. This is problematic because users can ruin
+the integrity of the site by posting from a site that is not an approved html5
+game.</p>
+
+
+
+<a name="issues"></a><h1>Issues Found</h1>
+<ol>
+<li><h2>No Restriction on Cross Origin Sharing</h2></li>
+<ul>
+<li>Location: web.js - post API to submit.json<li>
+<li>Severity: HIGH - Anyone can post highscores with game titles that are not
+their own. This ruins the integrity of the site which is supposed to keep track
+of highscores for games.</li>
+<li>Description: The cross origin sharing is enabled in the header with a '*'.
+This means that any site can post to the application. The high scores that they
+post could be false (e.g. not from valid games or fake scores from real
+games).</li>
+<li>Resolution: Keep a white list of games that can post to this application. If
+someone tries to post to the api that is not on the white list, they will be
+denied access.</li>
+</ul>
+
+<li><h2>No Sanitization of Post API Input</h2></li>
+<ul>
+<li>Location: web.js - post API to submit.json</li>
+<li>Severity: HIGH - malicious scripts can be injected and will run on the home
+page. These scripts could mangle the page or redirect to a new site.</li>
+<li>Description: The input to the post API is stored in the database and then
+displayed as html on the homepage. A hacker could change the username
+game_title, or score field to contain javascript code within script tags. This
+code will then be executed on the homepage. This ruins the integrity of the
+site.</li>
+<li>Resolution: Sanitize the input to make sure that it does not contain script
+or any other html tags. This will prevent users from writing code to mess up the
+appearance of the page.</li>
+</ul>
+
+<li><h2>No Input Size Limitations</h2>
+<ul>
+<li>Location: web.js - post API to submit.json</li>
+<li>Severity: HIGH - a huge input could crash the database</li>
+<li>Description: the input to the post API does not have a size limit. The user
+could theoretically post a score that is a terrabyte long. Something this large
+cannot be stored in a mongo document and the database would be comprimised. A
+smaller but still annoyingly long input will ruin the appearance of the homepage
+when it is displayed</li>
+<li>Resolution: Put a cap on the length of the inputs stored in the database.
+Either truncate the input or return an error so that malicious users cannot harm
+the application in this way.</li>
+</ul>
+</li>
+
+<li><h2>Comments in the Source Code</h2>
+<ul>
+<li>Location: web.js</li>
+<li>Severity: Low - The comments give away unnecessary information and make the
+code look sloppy</li>
+<li>Description: The source code contains some long commented out sections.
+These reveal unnecessary information about the code and are not good style. The
+comments present in this application do not give away much information, but it
+is still a practice that should be avoided.</li>
+<li>Resolution: Remove comments</li>
+</ul>
+</li>
+</ol>
+
+
+<a name="conclusion"></a><h1>Conclusion</h1>
+<p>The code for this assignment is generally well designed and works correctly.
+However there are several serious security flaws. Before this code is deployed
+for wide public use, these issues must be addressed. If they are ignored the
+  appliaction will be vulnerable and easily compromised by any malicious user. </p> 
+</body>
+</html>
