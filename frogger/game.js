@@ -229,10 +229,10 @@ function drawBoard(){
     drawFooter();
     var thescore = score;
     var data = {};
-    data["game_title"] = "mines";
+    data["game_title"] = "Frogger";
     data["username"] = "David";
     data["score"] = score;
-    $.post("http://agile-cliffs-3152.herokuapp.com/submit.json",data);
+    $.post("http://infinite-hollows-6307.herokuapp.com/submit.json",data);
     ctx.font="30px Arial Green";
     ctx.fillText("Game Over",120,200);
     ctx.font="20px Arial Green";
